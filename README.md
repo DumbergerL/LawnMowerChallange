@@ -4,6 +4,8 @@ Robotic lawn mowers work in unpredictable movements. They orientate themselves i
 
 In this challenge, such a robotic mower journey is to be simulated. The participants of this programming challange are tasked to develop the most efficient algorithm possible using the reduced number of sensors to mow the entire lawn on different unknown terrains.
 
+![LawnMowerChallange-Gif.gif](LawnMowerChallange-Gif.gif)
+
 ## The Sensors
 
 Initially, the robot only knows the **length of the boundary wire** that is stretched around the entire property. It starts at the charging station. The angle at which it is positioned to the outer boundary is unknown.
