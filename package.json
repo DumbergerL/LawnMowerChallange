@@ -1,0 +1,21 @@
+{
+  "name": "lawnmowerchallange",
+  "version": "1.0.0",
+  "description": "Robotic lawn mowers work in unpredictable movements. They orientate themselves in space with a very reduced set of sensors. The challenge is to enable the most efficient journey possible across the lawn with the reduced outside world information.",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node src/index.js",
+    "backend": "tsc -p tsconfig.json && node src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^4.28.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.4.1",
+    "typescript": "^5.5.4"
+  }
+}
