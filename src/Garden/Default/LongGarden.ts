@@ -19,4 +19,12 @@ export default class LongGarden implements IGarden {
             {x: 0, y: 0},
         ]
     }
+
+    getResolution(): number {
+        return 30;
+    }
+
+    getMaxSteps(): number {
+        return 500;
+    }
 }

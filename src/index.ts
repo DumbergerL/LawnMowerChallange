@@ -26,6 +26,7 @@ server.get('/garden', async (request, reply) => {
   return {
     boundaryLength: simulation.getBoundaryLength(),
     boundaryNodes: simulation.getBoundaryNodes(),
+    lawnResolution: simulation.getLawnResolution(),
     ... simulation.getSimulationStatus()
   };
 })

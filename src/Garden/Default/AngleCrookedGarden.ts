@@ -19,4 +19,12 @@ export default class AngleCrookedGarden implements IGarden {
             {x: 20, y: 700},
         ]
     }
+
+    getResolution(): number {
+        return 40;
+    }
+
+    getMaxSteps(): number {
+        return 5;
+    }
 }

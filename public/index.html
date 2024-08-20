@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
     <title>My Lawn Mower Challenge</title>
 </head>
+
 <body>
     <section class="section">
         <div class="container">
@@ -18,17 +20,28 @@
         <div class="container">
             <input id="reset" class="button" value="Reset" />
             <input id="step" class="button" value="Step" />
-            <input id="play" class="button" value="Start" />
+
+            <div class="field has-addons">
+                <p class="control">
+                    <input id="play" class="button" value="Start" />
+                </p>
+                <p class="control">
+                    <input id="play-speed2" class="button" value="x2" />
+                </p>
+                <p class="control">
+                    <input id="play-speed5" class="button" value="x10" />
+                </p>
+            </div>
 
             <div class="card">
                 <div class="card-content">
-                  <div class="content">
-                    <div id="canvas" style="min-height:80vh;"></div>
+                    <div class="content">
+                        <div id="canvas" style="min-height:80vh;"></div>
 
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </section>
 
@@ -37,4 +50,5 @@
     <script src="js/zui.js"></script>
     <script src="main.js"></script>
 </body>
+
 </html>

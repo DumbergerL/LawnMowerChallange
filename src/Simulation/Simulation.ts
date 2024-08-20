@@ -5,13 +5,16 @@ import { ILawnMower, ILawnMowerFactory } from "../LawnMower/LawnMowerInterface";
 import { Angle } from "../2D/Angle";
 import { Collision } from "../2D/Collision";
 import { Garden } from "../Garden/Garden";
+import { Lawn, LawnPixel } from "./Lawn";
 
 
 type SimulationStatus = {
+    status: 'INITIALIZED' | 'IN_PROGRESS' | 'FINISHED',
     lawnMower: {
         position: Position,
         angle: number,
     },
+    lawn: LawnPixel[],
     collsionPoint?: CollisionData
 }
 
@@ -23,6 +26,7 @@ type CollisionData = {
 }
 
 export default class Simulation {
+    
     private DISTACNE = 20;
 
     private garden: IGarden;
@@ -31,10 +35,14 @@ export default class Simulation {
     private boundaryLength: number;
     private lawnMower: ILawnMower;
 
+    private lawn: Lawn;
+
     private currentPosition: Position | undefined;
     private currentAngle: number | undefined;
 
     private isFreshInitialized: boolean = false;
+
+    private stepCount = 0;
 
     constructor(garden: IGarden, lawnMowerFactory: ILawnMowerFactory) {
         this.garden = garden;
@@ -42,6 +50,9 @@ export default class Simulation {
         this.boundaryLines = Garden.getBoundaryLine(garden);
         this.boundaryLength = Position.calculateBoundaryLength(this.boundaryNodes);
         this.lawnMower = lawnMowerFactory.createForGarden(this.boundaryLength);
+
+        this.lawn = new Lawn(this.boundaryNodes, this.boundaryLines, this.garden.getResolution());
+
     }
 
     public initalize(): SimulationStatus {
@@ -52,6 +63,9 @@ export default class Simulation {
         this.currentPosition = this.garden.getStartPosition();
         this.currentAngle = this.garden.getStartAngle();
         this.isFreshInitialized = true;
+        this.stepCount = 0;
+        
+        this.lawn.initialize();
 
         return this.getSimulationStatus();
     }
@@ -61,7 +75,10 @@ export default class Simulation {
             throw new Error('Simulation not initialized');
         }
 
+
         const data: SimulationStatus = {
+            status: this.isFreshInitialized ? 'INITIALIZED' : ( (this.lawn.isFinished() || this.stepCount >= this.garden.getMaxSteps()) ? 'FINISHED' : 'IN_PROGRESS'),
+            lawn: this.lawn.getLawnPixels(),
             lawnMower: {
                 position: this.currentPosition,
                 angle: this.currentAngle
@@ -98,7 +115,17 @@ export default class Simulation {
         return this.boundaryNodes;
     }
 
+    public getLawnResolution(): number {
+        return this.garden.getResolution();
+    }
+
     public step(): SimulationStatus {
+        this.stepCount++;
+
+        if(this.stepCount > this.garden.getMaxSteps()) {
+            return this.getSimulationStatus();
+        }
+
         if (this.currentAngle === undefined || this.currentPosition === undefined) {
             throw new Error('Simulation not initialized');
         }
@@ -109,10 +136,21 @@ export default class Simulation {
 
         if (collisionData == false || this.isFreshInitialized) {
             this.isFreshInitialized = false;
-            this.currentPosition = newPoint;
+            
+            // mow the lawn
+            this.lawn.cutGrass(this.currentPosition, newPoint);
+
+            // move the lawn mower
+            this.currentPosition = newPoint; 
             return this.getSimulationStatus();
         } else {
             const newPointAfterCollision = this.calculatePositionAfterCollision(collisionData);
+            
+            // mow the lawn
+            this.lawn.cutGrass(this.currentPosition, collisionData.position);
+            this.lawn.cutGrass(collisionData.position, newPointAfterCollision);
+            
+            // move the lawn mower
             this.currentPosition = newPointAfterCollision
             return this.getSimulationStatus(collisionData);
         }
