@@ -15,6 +15,7 @@ type SimulationStatus = {
         angle: number,
     },
     lawn: LawnPixel[],
+    percentageCut: number,
     collsionPoint?: CollisionData
 }
 
@@ -75,10 +76,12 @@ export default class Simulation {
             throw new Error('Simulation not initialized');
         }
 
+        const percentageCut = this.lawn.getPercentageCut();
 
         const data: SimulationStatus = {
-            status: this.isFreshInitialized ? 'INITIALIZED' : ( (this.lawn.isFinished() || this.stepCount >= this.garden.getMaxSteps()) ? 'FINISHED' : 'IN_PROGRESS'),
+            status: this.isFreshInitialized ? 'INITIALIZED' : ( (percentageCut >= 1 || this.stepCount >= this.garden.getMaxSteps()) ? 'FINISHED' : 'IN_PROGRESS'),
             lawn: this.lawn.getLawnPixels(),
+            percentageCut: percentageCut,
             lawnMower: {
                 position: this.currentPosition,
                 angle: this.currentAngle

@@ -30,10 +30,11 @@ function loadGarden() {
 
 function processStep() {
   ajax.post('/step').then(function (response) {
-    console.log(response.data);
-
+    
     paintLawnMower(response.data.lawnMower);
     paintLawn(response.data.lawn);
+
+    document.getElementById('cardHeader').innerText = (Math.round(response.data.percentageCut * 10000) / 100).toFixed(2) + "% cut";
 
     if(response.data.status === 'FINISHED'){
       finishSimulation();

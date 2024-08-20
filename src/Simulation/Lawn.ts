@@ -83,8 +83,8 @@ export class Lawn {
         return this.lawnPixels;
     }
 
-    public isFinished(): boolean {
-        return this.lawnPixels.every(pixel => pixel.wasCut);
+    public getPercentageCut(): number {
+        return this.lawnPixels.filter(pixel => pixel.wasCut).length / this.lawnPixels.length;
     }
 
     public cutGrass(from: Position, to: Position) {
