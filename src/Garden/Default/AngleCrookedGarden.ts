@@ -25,6 +25,6 @@ export default class AngleCrookedGarden implements IGarden {
     }
 
     getMaxSteps(): number {
-        return 5;
+        return Number.POSITIVE_INFINITY;
     }
 }

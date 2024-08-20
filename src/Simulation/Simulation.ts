@@ -64,7 +64,7 @@ export default class Simulation {
         this.currentAngle = this.garden.getStartAngle();
         this.isFreshInitialized = true;
         this.stepCount = 0;
-        
+
         this.lawn.initialize();
 
         return this.getSimulationStatus();
@@ -130,30 +130,35 @@ export default class Simulation {
             throw new Error('Simulation not initialized');
         }
 
-        const newPoint = Position.calculateFromAngleAndDistance(this.currentPosition, this.currentAngle, this.DISTACNE);
+        let pointFrom = this.currentPosition;
+        let pointTo = Position.calculateFromAngleAndDistance(this.currentPosition, this.currentAngle, this.DISTACNE);
+        let foundCollision = false;
+        let collisionData: CollisionData | false | undefined = undefined;
 
-        const collisionData = this.checkCollision(this.currentPosition, newPoint);
+        do{
+           const collisionData = this.checkCollision(pointFrom, pointTo);
 
-        if (collisionData == false || this.isFreshInitialized) {
-            this.isFreshInitialized = false;
-            
-            // mow the lawn
-            this.lawn.cutGrass(this.currentPosition, newPoint);
+            if (collisionData && !this.isFreshInitialized) {
+                foundCollision = true;
+                
+                this.lawn.cutGrass(pointFrom, collisionData.position);
+                this.lawn.cutGrass(collisionData.position, pointTo);
 
-            // move the lawn mower
-            this.currentPosition = newPoint; 
-            return this.getSimulationStatus();
-        } else {
-            const newPointAfterCollision = this.calculatePositionAfterCollision(collisionData);
-            
-            // mow the lawn
-            this.lawn.cutGrass(this.currentPosition, collisionData.position);
-            this.lawn.cutGrass(collisionData.position, newPointAfterCollision);
-            
-            // move the lawn mower
-            this.currentPosition = newPointAfterCollision
-            return this.getSimulationStatus(collisionData);
-        }
+                pointTo = this.calculatePositionAfterCollision(collisionData);
+            }else{
+                foundCollision = false;
+
+                this.lawn.cutGrass(pointFrom, pointTo);
+            }
+
+            if(this.isFreshInitialized){
+                this.isFreshInitialized = false;
+            }
+        }while(foundCollision);
+
+        this.currentPosition = pointTo;
+    
+        return this.getSimulationStatus(collisionData);
     }
 
     private checkCollision(oldPosition: Position, newPosition: Position): CollisionData | false {
@@ -186,7 +191,6 @@ export default class Simulation {
 
         console.log("Angle | BorderAngle | AbsoluteBorder", angle * (180/Math.PI) , collisionData.borderAngle  * (180/Math.PI) , absoluteAngle  * (180/Math.PI) );
 
-        // TODO: Check if new calculated positoin is inside the boundary
         return Position.calculateFromAngleAndDistance(collisionData.position, absoluteAngle, lengthAfterCollision);
     }
 }
