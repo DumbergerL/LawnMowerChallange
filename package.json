@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node src/index.js",
-    "backend": "tsc -p tsconfig.json && node dist/src/index.js"
+    "backend": "tsc -p tsconfig.json && node dist/src/index.js",
+    "benchmark": "tsc -p tsconfig.json && node dist/src/benchmark.js"
   },
   "keywords": [],
   "author": "",

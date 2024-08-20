@@ -1,5 +1,9 @@
 import { Line } from "../2D/Line";
 import { Position } from "../2D/Position";
+import AngleCrookedGarden from "./Default/AngleCrookedGarden";
+import DefaultGarden from "./Default/DefaultGarden";
+import LongGarden from "./Default/LongGarden";
+import UShapeGarden from "./Default/UShapeGarden";
 import IGarden from "./GardenInterface";
 
 export const Garden = {
@@ -20,4 +24,18 @@ export const Garden = {
     getBoundaryLine: (garden: IGarden): Line[] => {
         return Line.convertPositionArrayToLines(Garden.getAllBoundaryNodes(garden));
     },
+
+    /**
+     * List of all garden implementations
+     */
+    getAllGardens: (): IGarden[] => {
+        return [
+          new DefaultGarden(),
+          new AngleCrookedGarden(),
+          new LongGarden(), 
+          new UShapeGarden() 
+        ];
+    },
+
+    defaultMaxSteps: 100000,
 }

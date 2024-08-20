@@ -1,4 +1,5 @@
 import { Position } from "../../2D/Position";
+import { Garden } from "../Garden";
 import  IGarden from "../GardenInterface";
 
 export default class LongGarden implements IGarden {
@@ -25,6 +26,6 @@ export default class LongGarden implements IGarden {
     }
 
     getMaxSteps(): number {
-        return 500;
+        return Garden.defaultMaxSteps;
     }
 }

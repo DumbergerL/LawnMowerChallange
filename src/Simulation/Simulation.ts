@@ -27,7 +27,7 @@ type CollisionData = {
 }
 
 export default class Simulation {
-    
+   
     private DISTACNE = 20;
 
     private garden: IGarden;
@@ -122,6 +122,10 @@ export default class Simulation {
         return this.garden.getResolution();
     }
 
+    public getStepCount(): any {
+        return this.stepCount;
+    }
+
     public step(): SimulationStatus {
         this.stepCount++;
 
@@ -157,7 +161,7 @@ export default class Simulation {
             if(this.isFreshInitialized){
                 this.isFreshInitialized = false;
             }
-        }while(foundCollision);
+        }while(foundCollision && false);
 
         this.currentPosition = pointTo;
     
@@ -191,8 +195,6 @@ export default class Simulation {
 
         this.currentAngle = absoluteAngle;
         const lengthAfterCollision = this.DISTACNE - collisionData.lengthToIntersection;
-
-        console.log("Angle | BorderAngle | AbsoluteBorder", angle * (180/Math.PI) , collisionData.borderAngle  * (180/Math.PI) , absoluteAngle  * (180/Math.PI) );
 
         return Position.calculateFromAngleAndDistance(collisionData.position, absoluteAngle, lengthAfterCollision);
     }
