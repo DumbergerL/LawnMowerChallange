@@ -33,6 +33,22 @@ function resetGarden() {
     });
 }
 
+let animationInterval = null;
+function toggleAnimation() {
+  if(animationInterval == null){
+    animationInterval = setInterval(function(){
+      processStep();
+    }, 200);
+    document.getElementById('play').value = 'Stop';
+
+  }else{
+    clearInterval(animationInterval);
+    animationInterval = null;
+    document.getElementById('play').value = 'Start';
+  }
+
+}
+
 /**
  * WINDOW ON LOAD
  */
@@ -45,11 +61,13 @@ window.onload = function () {
         resetGarden();
     });
 
-
     document.getElementById('step').addEventListener('click', function () {
         processStep();
     });
 
+    document.getElementById('play').addEventListener('click', function () {
+      toggleAnimation();
+  });
 };
 
 /**

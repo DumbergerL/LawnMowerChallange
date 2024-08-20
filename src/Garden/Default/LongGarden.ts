@@ -1,7 +1,7 @@
 import { Position } from "../../2D/Position";
 import  IGarden from "../GardenInterface";
 
-export default class DefaultGarden implements IGarden {
+export default class LongGarden implements IGarden {
     
     getStartPosition(): Position {
         return {x: 200, y: 0};
@@ -14,8 +14,8 @@ export default class DefaultGarden implements IGarden {
     getOtherBoundaryNodes(): Position[] {
         return [
             //{x: 200, y: 0}, Start Boundary
-            {x: 200, y: 300},
-            {x: 0, y: 300},            
+            {x: 200, y: 3000},
+            {x: 0, y: 3000},            
             {x: 0, y: 0},
         ]
     }

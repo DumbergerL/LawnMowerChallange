@@ -1,7 +1,9 @@
 import fastify from 'fastify'
 import DefaultGarden from './Garden/Default/DefaultGarden'
-import { factory } from './LawnMower/Default/DumbLawnMower'
+import { factory } from './LawnMower/Default/RandomLawnMower'
 import Simulation from './Simulation/Simulation'
+import LongGarden from './Garden/Default/LongGarden'
+import AngleCrookedGarden from './Garden/Default/AngleCrookedGarden'
 
 const server = fastify()
 
@@ -17,7 +19,7 @@ server.addHook('preHandler', (req, res, done) => {
   done();
 })
 
-const simulation = new Simulation(new DefaultGarden(), factory);
+const simulation = new Simulation(new AngleCrookedGarden(), factory);
 simulation.initalize();
 
 server.get('/garden', async (request, reply) => {
