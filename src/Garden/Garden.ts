@@ -7,6 +7,11 @@ import NormalGarden from "./Default/NormalGarden";
 import UShapeGarden from "./Default/UShapeGarden";
 import IGarden from "./GardenInterface";
 
+type GardenRegistry = {
+    id: number,
+    garden: IGarden
+}
+
 export const Garden = {
     /**
      * Create a list with all boundary nodes of the garden including the start node.
@@ -16,7 +21,7 @@ export const Garden = {
     getAllBoundaryNodes: (garden: IGarden): Position[] => {
         return [garden.getStartPosition(), ...garden.getOtherBoundaryNodes()];
     },
-    
+
     /**
      * Create a boundary line for the garden including the start node.
      * @param garden 
@@ -29,15 +34,15 @@ export const Garden = {
     /**
      * List of all garden implementations
      */
-    getAllGardens: (): IGarden[] => {
+    getAllGardens: (): GardenRegistry[] => {
         return [
-          new DefaultGarden(),
-          new AngleCrookedGarden(),
-          new LongGarden(), 
-          new UShapeGarden(),
-          new NormalGarden()
+            { id: 1, garden: new DefaultGarden() },
+            { id: 2, garden: new AngleCrookedGarden() },
+            { id: 3, garden: new LongGarden() },
+            { id: 4, garden: new UShapeGarden() },
+            { id: 5, garden: new NormalGarden() }
         ];
     },
 
-    defaultMaxSteps: 100000,
+    defaultMaxSteps: 10000000,
 }

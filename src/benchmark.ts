@@ -12,14 +12,17 @@ const tableMaxBounces: any = {};
 const tablePercentage: any = {};
 const tableSteps: any = {};
 
-gardens.forEach(garden => {
+gardens.forEach(gardenRegistry => {
+    const garden = gardenRegistry.garden;
 
     const rowTime: any = {};
     const rowMaxBounces: any = {};
     const rowPercentage: any = {};
     const rowSteps: any = {};
 
-    lawnMowerFactories.forEach(lawnMowerFactory => {
+    lawnMowerFactories.forEach(lawnMowerFactoryRegistry => {
+        const lawnMowerFactory = lawnMowerFactoryRegistry.factory;
+
         const simulation = new Simulation(garden, lawnMowerFactory);
         simulation.initalize();
 

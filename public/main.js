@@ -4,6 +4,48 @@ const ajax = axios.create({
 
 let lawnResolution = 20;
 
+let gardens = [];
+let lawnMowers = [];
+
+function loadConfiguration() {
+  ajax.get('/configuration').then(function (response) {
+    gardens = response.data.gardens;
+    gardens.forEach(function (garden) {
+      const option = document.createElement("option");
+      option.text = garden.name;
+      option.value = garden.id;
+      document.getElementById('gardenSelect').appendChild(option);
+    });
+
+    lawnMowers = response.data.lawnMowers;
+    lawnMowers.forEach(function (lawnMower) {
+      const option = document.createElement("option");
+      option.text = lawnMower.name;
+      option.value = lawnMower.id;
+      document.getElementById('lawnMowerSelect').appendChild(option);
+    });
+  });
+}
+
+function loadWithConfiguration() {
+  const gardenId = document.getElementById('gardenSelect').value;
+  const lawnMowerId = document.getElementById('lawnMowerSelect').value;
+
+  if(gardenId == null || lawnMowerId == null) {
+    alert("Please select garden and lawn mower.");
+    return;
+  }
+
+  ajax.post('/startSimulation', {gardenId: gardenId, lawnMowerId: lawnMowerId}).then(function (response) {
+    if(response.status != 200){
+      alert("Error in simulation start.");
+    }else{
+      loadGarden();
+    }
+  });
+}
+
+
 function loadGarden() {
   ajax.get('/garden').then(function (response) {
     console.log("GARDEN", response.data);
@@ -11,6 +53,7 @@ function loadGarden() {
     lawnResolution = response.data.lawnResolution;
 
     // BORDERS
+    gardenGroup.remove(gardenGroup.children);
     const points = [];
     response.data.boundaryNodes.forEach(function (position) {
       points.push(position.x);
@@ -30,16 +73,16 @@ function loadGarden() {
 
 function processStep() {
   ajax.post('/step').then(function (response) {
-    
+
     paintLawnMower(response.data.lawnMower);
     paintLawn(response.data.lawn);
 
     document.getElementById('cardHeader').innerText = (Math.round(response.data.percentageCut * 10000) / 100).toFixed(2) + "% cut";
 
-    if(response.data.status === 'FINISHED'){
+    if (response.data.status === 'FINISHED') {
       finishSimulation();
     }
-    if(response.data.status === 'ERROR'){
+    if (response.data.status === 'ERROR') {
       abortWithErrorSimulation()
     }
 
@@ -52,13 +95,13 @@ function resetGarden() {
   });
 }
 
-function finishSimulation(){
+function finishSimulation() {
   clearInterval(animationInterval);
   animationInterval = null;
   alert("Simulation finished. Lawn is fully cut or max steps are reached.");
 }
 
-function abortWithErrorSimulation(){
+function abortWithErrorSimulation() {
   clearInterval(animationInterval);
   animationInterval = null;
   alert("Simulation aborted. Max bounces limit is reached.");
@@ -67,7 +110,7 @@ function abortWithErrorSimulation(){
 let animationInterval = null;
 function toggleAnimation(speed = undefined) {
   if (animationInterval == null || speed) {
-    if(speed == undefined) speed = 1;
+    if (speed == undefined) speed = 1;
     clearInterval(animationInterval);
     animationInterval = null;
 
@@ -90,7 +133,11 @@ function toggleAnimation(speed = undefined) {
 window.onload = function () {
 
   initTwo();
-  loadGarden();
+  loadConfiguration();
+
+  document.getElementById('loadConfiguration').addEventListener('click', function () {
+    loadWithConfiguration();
+  });
 
   document.getElementById('reset').addEventListener('click', function () {
     resetGarden();

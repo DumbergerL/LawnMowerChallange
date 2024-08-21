@@ -1,11 +1,10 @@
-import fastify from 'fastify'
+import fastify, { FastifyRequest } from 'fastify'
 import DefaultGarden from './Garden/Default/DefaultGarden'
-import { factory } from './LawnMower/Default/AlternatingLawnMower'
+import { factory } from './LawnMower/Default/DumbLawnMower'
 import Simulation from './Simulation/Simulation'
-import LongGarden from './Garden/Default/LongGarden'
-import AngleCrookedGarden from './Garden/Default/AngleCrookedGarden'
-import UShapeGarden from './Garden/Default/UShapeGarden'
 import NormalGarden from './Garden/Default/NormalGarden'
+import { Garden } from './Garden/Garden'
+import { LawnMower } from './LawnMower/LawnMower'
 
 const server = fastify()
 
@@ -21,8 +20,45 @@ server.addHook('preHandler', (req, res, done) => {
   done();
 })
 
-const simulation = new Simulation(new NormalGarden(), factory);
+let simulation = new Simulation(new NormalGarden(), factory);
 simulation.initalize();
+
+server.get('/configuration' , async (request, reply) => {
+  return {
+    gardens: Garden.getAllGardens().map(gardenRegistry => {
+      return {
+        id: gardenRegistry.id,
+        name: gardenRegistry.garden.constructor.name
+      }
+    }),
+    lawnMowers: LawnMower.getAllLawnMowerFactories().map(lawnMowerRegistry => {
+      return {
+        id: lawnMowerRegistry.id,
+        name: lawnMowerRegistry.factory.constructor.name
+      }
+    }),
+  }
+});
+
+server.post('/startSimulation', async (request: FastifyRequest, reply) => {
+  const body = request.body as {
+    gardenId?: number,
+    lawnMowerId?: number
+  }
+
+  const gardenId = body.gardenId;
+  const lawnMowerId = body.lawnMowerId;
+  
+  const garden = Garden.getAllGardens().find(gardenRegistry => gardenRegistry.id == gardenId)?.garden ?? new DefaultGarden();
+  const lawnMowerFactory = LawnMower.getAllLawnMowerFactories().find(lawnMowerRegistry => lawnMowerRegistry.id == lawnMowerId)?.factory ?? factory;
+
+  simulation = new Simulation(garden, lawnMowerFactory);
+  simulation.initalize();
+
+  return {
+    status: 'OK'
+  };
+})
 
 server.get('/garden', async (request, reply) => {
   return {
@@ -40,10 +76,6 @@ server.post('/step', async (request, reply) => {
 server.post('/reset', async (request, reply) => {
   simulation.initalize();
 });
-
-server.get('/ping', async (request, reply) => {
-  return 'pong\n'
-})
 
 server.listen({ port: 8080 }, (err, address) => {
   if (err) {
