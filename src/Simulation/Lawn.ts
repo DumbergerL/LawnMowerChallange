@@ -19,16 +19,13 @@ export type LawnPixel = {
 export class Lawn {
 
     private boundaryNodes: Position[];
-    private boundsryLines: Line[];
     private lawnPixels: LawnPixel[] = [];
     private lawnPixelSize: number;
 
 
-    constructor(boundaryNodes: Position[],
-        boundaryLines: Line[], lawnPixelSize: number) {
+    constructor(boundaryNodes: Position[], lawnPixelSize: number) {
 
         this.boundaryNodes = boundaryNodes;
-        this.boundsryLines = boundaryLines;
         this.lawnPixelSize = lawnPixelSize;
     }
 
@@ -50,7 +47,7 @@ export class Lawn {
         return Collision.positionIsInsideBoundary({ x: pixel.x, y: pixel.y }, this.boundaryNodes);
     }
 
-    private getLawnDimensions(): LawnDimensions {
+    public getLawnDimensions(): LawnDimensions {
         let minX = Number.POSITIVE_INFINITY;
         let maxX = Number.NEGATIVE_INFINITY;
         let minY = Number.POSITIVE_INFINITY;

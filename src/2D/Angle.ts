@@ -87,5 +87,20 @@ export const Angle = {
         }
 
         return absoluteAngle;
+    },
+
+    changeDirection: (angle: number) => {
+        let newAngle = angle - Math.PI;
+        if(newAngle < 0){
+            // make absolute angle positive
+            newAngle = Math.PI * 2 + newAngle;
+        }
+
+        // reduce all angles to 0 to 360 degrees
+        while(newAngle >= Math.PI * 2){
+            newAngle = newAngle - Math.PI * 2;
+        }
+
+        return newAngle;
     }
 }

@@ -8,9 +8,8 @@ export type Position = {
 export const Position = {
     calculateFromAngleAndDistance: (position: Position, angle: number, distance: number): Position => {
         return {
-            x: Math.round(Math.cos(angle) * distance + position.x),
-            y: Math.round(Math.sin(angle) * distance + position.y)
-        
+            x: Math.cos(angle) * distance + position.x,
+            y: Math.sin(angle) * distance + position.y
         }    
     },
     calculateBoundaryLength: (nodes: Position[]): number => {
@@ -41,5 +40,11 @@ export const Position = {
         var b = posA.y - posB.y;
 
         return Math.sqrt( a*a + b*b );
+    },
+    isEqual: (posA: Position, posB: Position): boolean => {
+        const deltaX = Math.abs(posA.x - posB.x);
+        const deltaY = Math.abs(posA.y - posB.y);
+
+        return deltaX < 0.0001 && deltaY < 0.0001;
     }
 }

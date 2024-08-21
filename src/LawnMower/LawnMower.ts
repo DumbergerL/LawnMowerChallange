@@ -3,9 +3,9 @@ import { factory as dumbLawnMowerFactory } from "./Default/DumbLawnMower";
 import { factory as incidenceEqualsReflectionLawnMowerFactory } from "./Default/IncidenceEqualsReflectionLawnMower";
 import { factory as alternatingLawnMowerFactory } from "./Default/AlternatingLawnMower";
 import { factory as circulateLawnMowerFactory } from "./Default/CirculateLawnMower";
+import { factory as excellentLawnMowerFactory } from "./Default/ExcellentLawnMower";
 
 import { ILawnMowerFactory } from "./LawnMowerInterface";
-
 
 export const LawnMower = {
     getAllLawnMowerFactories: (): ILawnMowerFactory[] => {
@@ -14,7 +14,8 @@ export const LawnMower = {
             dumbLawnMowerFactory,
             alternatingLawnMowerFactory,
             circulateLawnMowerFactory,
-            incidenceEqualsReflectionLawnMowerFactory
+            incidenceEqualsReflectionLawnMowerFactory,
+            excellentLawnMowerFactory
         ]
     }
 }

@@ -39,6 +39,10 @@ function processStep() {
     if(response.data.status === 'FINISHED'){
       finishSimulation();
     }
+    if(response.data.status === 'ERROR'){
+      abortWithErrorSimulation()
+    }
+
   });
 }
 
@@ -52,6 +56,12 @@ function finishSimulation(){
   clearInterval(animationInterval);
   animationInterval = null;
   alert("Simulation finished. Lawn is fully cut or max steps are reached.");
+}
+
+function abortWithErrorSimulation(){
+  clearInterval(animationInterval);
+  animationInterval = null;
+  alert("Simulation aborted. Max bounces limit is reached.");
 }
 
 let animationInterval = null;

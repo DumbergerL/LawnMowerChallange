@@ -3,6 +3,7 @@ import { Position } from "../2D/Position";
 import AngleCrookedGarden from "./Default/AngleCrookedGarden";
 import DefaultGarden from "./Default/DefaultGarden";
 import LongGarden from "./Default/LongGarden";
+import NormalGarden from "./Default/NormalGarden";
 import UShapeGarden from "./Default/UShapeGarden";
 import IGarden from "./GardenInterface";
 
@@ -33,7 +34,8 @@ export const Garden = {
           new DefaultGarden(),
           new AngleCrookedGarden(),
           new LongGarden(), 
-          new UShapeGarden() 
+          new UShapeGarden(),
+          new NormalGarden()
         ];
     },
 

@@ -8,15 +8,18 @@ import { Garden } from "../Garden/Garden";
 import { Lawn, LawnPixel } from "./Lawn";
 
 
+
+type SimulationStatusCategory = 'INITIALIZED' | 'IN_PROGRESS' | 'FINISHED' | 'ERROR';
+
 type SimulationStatus = {
-    status: 'INITIALIZED' | 'IN_PROGRESS' | 'FINISHED',
+    status: SimulationStatusCategory,
     lawnMower: {
         position: Position,
         angle: number,
     },
     lawn: LawnPixel[],
     percentageCut: number,
-    collsionPoint?: CollisionData
+    collisions?: CollisionData[]
 }
 
 type CollisionData = {
@@ -29,6 +32,7 @@ type CollisionData = {
 export default class Simulation {
    
     private DISTACNE = 20;
+    private MAX_BOUNCE_ATTEMPTS = 15;
 
     private garden: IGarden;
     private boundaryNodes: Position[];
@@ -42,6 +46,7 @@ export default class Simulation {
     private currentAngle: number | undefined;
 
     private isFreshInitialized: boolean = false;
+    private isError: boolean = false;
 
     private stepCount = 0;
 
@@ -52,8 +57,18 @@ export default class Simulation {
         this.boundaryLength = Position.calculateBoundaryLength(this.boundaryNodes);
         this.lawnMower = lawnMowerFactory.createForGarden(this.boundaryLength);
 
-        this.lawn = new Lawn(this.boundaryNodes, this.boundaryLines, this.garden.getResolution());
+        this.lawn = new Lawn(this.boundaryNodes, this.garden.getResolution());
 
+    }
+
+    public withDistance(distance: number): Simulation {
+        this.DISTACNE = distance;
+        return this;
+    }
+
+    public withMaxBounceAttempts(maxBounceAttempts: number): Simulation {
+        this.MAX_BOUNCE_ATTEMPTS = maxBounceAttempts;
+        return this;
     }
 
     public initalize(): SimulationStatus {
@@ -64,6 +79,7 @@ export default class Simulation {
         this.currentPosition = this.garden.getStartPosition();
         this.currentAngle = this.garden.getStartAngle();
         this.isFreshInitialized = true;
+        this.isError = false;
         this.stepCount = 0;
 
         this.lawn.initialize();
@@ -71,28 +87,43 @@ export default class Simulation {
         return this.getSimulationStatus();
     }
 
-    public getSimulationStatus(collision?: CollisionData): SimulationStatus {
+    public getSimulationStatus(collisions: CollisionData[] = []): SimulationStatus {
         if (this.currentAngle === undefined || this.currentPosition === undefined) {
             throw new Error('Simulation not initialized');
         }
 
-        const percentageCut = this.lawn.getPercentageCut();
-
         const data: SimulationStatus = {
-            status: this.isFreshInitialized ? 'INITIALIZED' : ( (percentageCut >= 1 || this.stepCount >= this.garden.getMaxSteps()) ? 'FINISHED' : 'IN_PROGRESS'),
+            status: this.getSimulationStatusCategory(),
             lawn: this.lawn.getLawnPixels(),
-            percentageCut: percentageCut,
+            percentageCut: this.lawn.getPercentageCut(),
             lawnMower: {
                 position: this.currentPosition,
                 angle: this.currentAngle
             }
         };
 
-        if (collision !== undefined) {
-            data.collsionPoint = collision;
+        if (collisions.length > 0) {
+            data.collisions = collisions;
         }
         return data;
     };
+
+    public getSimulationStatusCategory(): SimulationStatusCategory {
+        if(this.isError) {
+            return 'ERROR';
+        }
+
+        if(this.isFreshInitialized){
+            return 'INITIALIZED';
+        }
+        const percentageCut = this.lawn.getPercentageCut();
+
+        if(percentageCut >= 1 || this.stepCount >= this.garden.getMaxSteps()) {
+            return 'FINISHED';
+        }
+
+        return 'IN_PROGRESS';
+    }
 
     public getCurrentPoint(): Position {
         if (this.currentPosition === undefined) {
@@ -127,6 +158,10 @@ export default class Simulation {
     }
 
     public step(): SimulationStatus {
+        if(this.isError){
+            return this.getSimulationStatus();
+        }
+
         this.stepCount++;
 
         if(this.stepCount > this.garden.getMaxSteps()) {
@@ -139,40 +174,45 @@ export default class Simulation {
 
         let pointFrom = this.currentPosition;
         let pointTo = Position.calculateFromAngleAndDistance(this.currentPosition, this.currentAngle, this.DISTACNE);
-        let foundCollision = false;
-        let collisionData: CollisionData | false | undefined = undefined;
+        
+        let collisionDataOrFalse: CollisionData | false =  this.checkCollision(pointFrom, pointTo, this.isFreshInitialized ? this.currentPosition : undefined);
+        let collisions: CollisionData[] = [];
+        let attempts = 0;
+        while(collisionDataOrFalse !== false) {
+            collisions.push(collisionDataOrFalse);
+            
+            // Resolve Collision
+            let bounceOffPoint = this.calculatePositionAfterCollision(collisionDataOrFalse);   
+            
+            this.lawn.cutGrass(pointFrom, collisionDataOrFalse.position);
+            this.lawn.cutGrass(collisionDataOrFalse.position, bounceOffPoint);
 
-        do{
-           const collisionData = this.checkCollision(pointFrom, pointTo);
+            pointFrom = collisionDataOrFalse.position;
+            pointTo = bounceOffPoint;
 
-            if (collisionData && !this.isFreshInitialized) {
-                foundCollision = true;
-                
-                this.lawn.cutGrass(pointFrom, collisionData.position);
-                this.lawn.cutGrass(collisionData.position, pointTo);
-
-                pointTo = this.calculatePositionAfterCollision(collisionData);
-            }else{
-                foundCollision = false;
-
-                this.lawn.cutGrass(pointFrom, pointTo);
+            collisionDataOrFalse = this.checkCollision(pointFrom, pointTo, collisionDataOrFalse.position);
+            attempts++;
+            if(attempts > this.MAX_BOUNCE_ATTEMPTS) {
+                this.isError = true;
+                break;
             }
+        }
 
-            if(this.isFreshInitialized){
-                this.isFreshInitialized = false;
-            }
-        }while(foundCollision && false);
+        this.lawn.cutGrass(pointFrom, pointTo);
+
+        if(this.isFreshInitialized){
+            this.isFreshInitialized = false;
+        }
 
         this.currentPosition = pointTo;
-    
-        return this.getSimulationStatus(collisionData);
+        return this.getSimulationStatus(collisions);     
     }
 
-    private checkCollision(oldPosition: Position, newPosition: Position): CollisionData | false {
+    private checkCollision(oldPosition: Position, newPosition: Position, ignorePosition: Position|undefined = undefined): CollisionData | false {
 
         for (let i = 0; i < this.boundaryLines.length; i++) {
             const boundary = this.boundaryLines[i];
-            const collisionPosition = Collision.twoLines(boundary, [oldPosition, newPosition]);
+            const collisionPosition = Collision.twoLines(boundary, [oldPosition, newPosition], ignorePosition ? [ignorePosition] : []);
             if (collisionPosition) {
                 return {
                     position: collisionPosition,
@@ -185,6 +225,11 @@ export default class Simulation {
         return false;
     }
 
+    /**
+     * Calculate point where lawn mower lands when it bounce of the border. 
+     * @param collisionData 
+     * @returns 
+     */
     private calculatePositionAfterCollision(collisionData: CollisionData): Position {
         // TODO: Calculate distance from position to left starting point!
         const angle = this.lawnMower.handleBoundaryCollission(0, collisionData.angleToBorder);
