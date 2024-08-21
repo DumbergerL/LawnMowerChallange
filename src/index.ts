@@ -1,6 +1,6 @@
 import fastify from 'fastify'
 import DefaultGarden from './Garden/Default/DefaultGarden'
-import { factory } from './LawnMower/Default/AlternatingLawnMower'
+import { factory } from './LawnMower/Default/IncidenceEqualsReflectionLawnMower'
 import Simulation from './Simulation/Simulation'
 import LongGarden from './Garden/Default/LongGarden'
 import AngleCrookedGarden from './Garden/Default/AngleCrookedGarden'
