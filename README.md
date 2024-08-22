@@ -36,11 +36,11 @@ To run a benchmark test between the different LawnMower in the different gardens
 
 ## The Implementation
 
-The LawnMower are defined by the [Interface ILawnMower](/blob/main/src/LawnMower/LawnMowerInterface.ts) that provides the method `handleBoundaryCollission` that gives the LawnMower the travelled distancen since the last collision and the angle between the boundary wire and the lawn mower. To provide the LawnMower important starting information about the garden there is another interface: The ILawnMowerFactory that creates a LawnMower instance out of the informations of the garden.
+The LawnMower are defined by the [Interface ILawnMower](/src/LawnMower/LawnMowerInterface.ts) that provides the method `handleBoundaryCollission` that gives the LawnMower the travelled distancen since the last collision and the angle between the boundary wire and the lawn mower. To provide the LawnMower important starting information about the garden there is another interface: The ILawnMowerFactory that creates a LawnMower instance out of the informations of the garden.
 
-Participant of the challange must implement both: A LawnMower Implementation and a LawnMowerFactory. Examples can be found in the [DumbLawnMower Example](/blob/main/src/LawnMower/Default/DumbLawnMower.ts). The implemented LawnMower must then be registered in the [LawnMower getAllLawnMowerFactories method](/blob/main/src/LawnMower/LawnMower.ts#L20).
+Participant of the challange must implement both: A LawnMower Implementation and a LawnMowerFactory. Examples can be found in the [DumbLawnMower Example](/src/LawnMower/Default/DumbLawnMower.ts). The implemented LawnMower must then be registered in the [LawnMower getAllLawnMowerFactories method](/src/LawnMower/LawnMower.ts#L20).
 
-To determine whether the entire lawn area has been covered, the area is divided into pixels so called [LawnPixels](https://github.com/DumbergerL/LawnMowerChallange/blob/main/src/Simulation/Lawn.ts#L13) that are flagged when the robot ‘drives over’ them:
+To determine whether the entire lawn area has been covered, the area is divided into pixels so called [LawnPixels](/src/Simulation/Lawn.ts#L13) that are flagged when the robot ‘drives over’ them:
 
 ![LawnMower-Implementation.png](LawnMower-Implementation.png)
 
