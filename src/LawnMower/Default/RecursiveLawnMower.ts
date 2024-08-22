@@ -1,6 +1,9 @@
 import { ILawnMower, ILawnMowerFactory } from "../LawnMowerInterface";
 
-export default class ExcellentLawnMower implements ILawnMower {
+/**
+ * The recursive lawn mower will mow the lawn in a recursive pattern. The Collision angle will alternate in every collision between 84°, 95°, 147°, 13°, 45°, 123°, 107°, 40°.
+ */
+export default class RecursiveLawnMower implements ILawnMower {
     
     private stepCount = 0;
     
@@ -22,12 +25,12 @@ export default class ExcellentLawnMower implements ILawnMower {
     }
 }
 
-class ExcellentLawnMowerFactory implements ILawnMowerFactory {
+class RecursiveLawnMowerFactory implements ILawnMowerFactory {
 
     createForGarden(lengthBoundaryWire: number): ILawnMower {
-        return new ExcellentLawnMower();
+        return new RecursiveLawnMower();
     }
 }
 
-const factory = new ExcellentLawnMowerFactory();
+const factory = new RecursiveLawnMowerFactory();
 export { factory };

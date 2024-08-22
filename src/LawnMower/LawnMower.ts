@@ -2,8 +2,7 @@ import { factory as randomLawnMowerFactory } from "./Default/RandomLawnMower";
 import { factory as dumbLawnMowerFactory } from "./Default/DumbLawnMower";
 import { factory as incidenceEqualsReflectionLawnMowerFactory } from "./Default/IncidenceEqualsReflectionLawnMower";
 import { factory as alternatingLawnMowerFactory } from "./Default/AlternatingLawnMower";
-import { factory as circulateLawnMowerFactory } from "./Default/CirculateLawnMower";
-import { factory as excellentLawnMowerFactory } from "./Default/ExcellentLawnMower";
+import { factory as recursiveLawnMowerFactory } from "./Default/RecursiveLawnMower";
 
 import { ILawnMower, ILawnMowerFactory } from "./LawnMowerInterface";
 
@@ -22,9 +21,8 @@ export const LawnMower = {
             { id: 1, factory: randomLawnMowerFactory },
             { id: 2, factory: dumbLawnMowerFactory },
             { id: 3, factory: alternatingLawnMowerFactory },
-            { id: 4, factory: circulateLawnMowerFactory },
-            { id: 5, factory: incidenceEqualsReflectionLawnMowerFactory },
-            { id: 6, factory: excellentLawnMowerFactory }
+            { id: 4, factory: incidenceEqualsReflectionLawnMowerFactory },
+            { id: 5, factory: recursiveLawnMowerFactory }
         ]
     }
 }
