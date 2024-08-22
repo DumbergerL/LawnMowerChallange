@@ -44,5 +44,5 @@ export const Garden = {
         ];
     },
 
-    defaultMaxSteps: 10000000,
+    defaultMaxSteps: 100000,
 }

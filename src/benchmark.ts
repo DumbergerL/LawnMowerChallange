@@ -86,7 +86,7 @@ const printFormattedTable = (tableData: any, formatter: (cellValue: any) => stri
     console.table(tableData);
 }
 
-console.log("Finished benchmark in " + ((endBenchmark - startBenchmark) / 100).toFixed(2) + " s");
+console.log("Finished benchmark in " + ((endBenchmark - startBenchmark) / 1000).toFixed(2) + " s");
 
 console.log("\nTime in ms:")
 printFormattedTable(tableTime, cell => `${cell} ms`, true);

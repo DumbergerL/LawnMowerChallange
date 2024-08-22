@@ -30,6 +30,10 @@ These steps are repeated until the entire lawn has been travelled over once or t
 
 ![Demo Screenshot](DemoScreenshot.png)
 
+To run a benchmark test between the different LawnMower in the different gardens run the command `npm run benchmark`:
+
+![Benchmark](Benchmark.png)
+
 ## The Implementation
 
 The LawnMower are defined by the [Interface ILawnMower](/blob/main/src/LawnMower/LawnMowerInterface.ts) that provides the method `handleBoundaryCollission` that gives the LawnMower the travelled distancen since the last collision and the angle between the boundary wire and the lawn mower. To provide the LawnMower important starting information about the garden there is another interface: The ILawnMowerFactory that creates a LawnMower instance out of the informations of the garden.
