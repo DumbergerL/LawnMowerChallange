@@ -15,7 +15,7 @@ export default class ExcellentLawnMower implements ILawnMower {
         40 * (Math.PI/180),
     ]
 
-    handleBoundaryCollission(lengthBoundaryWireLeft: number, collissionAngle: number): number {
+    handleBoundaryCollision(lengthBoundaryWireLeft: number, collissionAngle: number): number {
         const angle = this.angles[this.stepCount % this.angles.length];
         this.stepCount++;
         return angle;

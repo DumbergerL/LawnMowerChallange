@@ -6,7 +6,7 @@ import Simulation from "../../src/Simulation/Simulation";
 import { LawnPixel } from "../../src/Simulation/Lawn";
 
 class NinentyDegreeLawnMower implements ILawnMower {
-    handleBoundaryCollission(lengthBoundaryWireLeft: number, collissionAngle: number): number {
+    handleBoundaryCollision(lengthBoundaryWireLeft: number, collissionAngle: number): number {
         return Math.PI / 2;
     }
 }

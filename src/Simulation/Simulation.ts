@@ -232,7 +232,7 @@ export default class Simulation {
      */
     private calculatePositionAfterCollision(collisionData: CollisionData): Position {
         // TODO: Calculate distance from position to left starting point!
-        const angle = this.lawnMower.handleBoundaryCollission(0, collisionData.angleToBorder);
+        const angle = this.lawnMower.handleBoundaryCollision(0, collisionData.angleToBorder);
         if(angle < 0 || angle > Math.PI) {
             throw new Error("New LawnMower Angle is not in the range of 0 to 180 degrees: " + angle);
         }

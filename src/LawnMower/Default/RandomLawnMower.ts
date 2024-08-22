@@ -1,7 +1,7 @@
 import { ILawnMower, ILawnMowerFactory } from "../LawnMowerInterface";
 
 export default class RandomLawnMower implements ILawnMower {
-    handleBoundaryCollission(lengthBoundaryWireLeft: number, collissionAngle: number): number {
+    handleBoundaryCollision(lengthBoundaryWireLeft: number, collissionAngle: number): number {
         const randomAngle = Math.floor(Math.random() * 179) + 1;
         return randomAngle * (Math.PI/180);
     }

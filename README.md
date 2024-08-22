@@ -12,27 +12,31 @@ Initially, the robot only knows the **length of the boundary wire** that is stre
 
 As soon as the robotic lawnmower hits a point on the boundary wire, the robot receives two signals: 
 
-a) The length of the boundary wire from the intersection point to the charging station (left side)
+a) The distance the robotic lawnmower drove since his last collision. 
 b) The angle at which the robotic lawnmower has hit the boundary wire (measured to the left-hand side).
 
 The robotic lawnmower must then decide at which angle it will continue to drive.
 
 ![LawnMower-Sensors.png](LawnMower-Sensors.png)
 
-These steps are repeated until the entire lawn has been travelled over once.
+These steps are repeated until the entire lawn has been travelled over once or the maximum steps are reached.
+
+## Run Project
+
+1. Download the SourceCode from GitHub
+2. Install the dependencies `npm install`
+3. Build and run the backend `npm run backend`
+4. Open the demo frontend (open public/index.html in browser):
+
+![Demo Screenshot](DemoScreenshot.png)
 
 ## The Implementation
 
-In order for the challenge to be carried out by the participants in different programming languages, the communication between the external sensors and the algorithm developed by the participant could be carried out using HTTP requests.
+The LawnMower are defined by the [Interface ILawnMower](/blob/main/src/LawnMower/LawnMowerInterface.ts) that provides the method `handleBoundaryCollission` that gives the LawnMower the travelled distancen since the last collision and the angle between the boundary wire and the lawn mower. To provide the LawnMower important starting information about the garden there is another interface: The ILawnMowerFactory that creates a LawnMower instance out of the informations of the garden.
 
-A small HTTP server (e.g. in JavaScript) could be developed in this repo to ‘host’ the challenge. The following endpoints are then offered for control:
+Participant of the challange must implement both: A LawnMower Implementation and a LawnMowerFactory. Examples can be found in the [DumbLawnMower Example](/blob/main/src/LawnMower/Default/DumbLawnMower.ts). The implemented LawnMower must then be registered in the [LawnMower getAllLawnMowerFactories method](/blob/main/src/LawnMower/LawnMower.ts#L20).
 
-- GET /landmower/status - returns the angle and the intersection boundary wire length for the current robotic lawnmower to the participant
-- POST /landmower/act - the request controls the next step of the robotic lawnmower, it contains the angle in the body at which the robotic lawnmower should continue its journey. In response to this end point, the next intersection point is returned with the length to the charging station and the angle of contact. 
-
-The POST /landmower/act end point is then called until the entire lawn has been mowed once (or a maximum number of possible ‘moves’ has been reached).
-
-To determine whether the entire lawn area has been covered, the area is divided into pixels that are flagged when the robot ‘drives over’ them:
+To determine whether the entire lawn area has been covered, the area is divided into pixels so called [LawnPixels](https://github.com/DumbergerL/LawnMowerChallange/blob/main/src/Simulation/Lawn.ts#L13) that are flagged when the robot ‘drives over’ them:
 
 ![LawnMower-Implementation.png](LawnMower-Implementation.png)
 

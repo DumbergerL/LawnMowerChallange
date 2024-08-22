@@ -4,7 +4,7 @@ export default class AlternatingLawnMower implements ILawnMower {
     
     private inPhaseA = true;
     
-    handleBoundaryCollission(lengthBoundaryWireLeft: number, collissionAngle: number): number {
+    handleBoundaryCollision(lengthBoundaryWireLeft: number, collissionAngle: number): number {
         this.inPhaseA = !this.inPhaseA;
         if(this.inPhaseA){
             return 30 * (Math.PI/180);

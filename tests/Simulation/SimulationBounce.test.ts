@@ -17,7 +17,7 @@ class BouncyLawnMower implements ILawnMower {
 
     private bounceIndex = 0;
 
-    handleBoundaryCollission(lengthBoundaryWireLeft: number, collissionAngle: number): number {
+    handleBoundaryCollision(lengthBoundaryWireLeft: number, collissionAngle: number): number {
         const angle = this.bounces[this.bounceIndex % this.bounces.length];
         this.bounceIndex++;
         return angle;

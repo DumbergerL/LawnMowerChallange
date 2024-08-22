@@ -1,7 +1,7 @@
 import { ILawnMower, ILawnMowerFactory } from "../LawnMowerInterface";
 
 export default class IncidenceEqualsReflectionLawnMower implements ILawnMower {
-    handleBoundaryCollission(lengthBoundaryWireLeft: number, collissionAngle: number): number {
+    handleBoundaryCollision(lengthBoundaryWireLeft: number, collissionAngle: number): number {
         return Math.PI- collissionAngle;
     }
 }
