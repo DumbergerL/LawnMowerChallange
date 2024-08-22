@@ -44,6 +44,7 @@ export default class Simulation {
 
     private currentPosition: Position | undefined;
     private currentAngle: number | undefined;
+    private lastCollisionPosition: Position;
 
     private isFreshInitialized: boolean = false;
     private isError: boolean = false;
@@ -59,6 +60,7 @@ export default class Simulation {
 
         this.lawn = new Lawn(this.boundaryNodes, this.garden.getResolution());
 
+        this.lastCollisionPosition = this.garden.getStartPosition();
     }
 
     public withDistance(distance: number): Simulation {
@@ -78,6 +80,8 @@ export default class Simulation {
 
         this.currentPosition = this.garden.getStartPosition();
         this.currentAngle = this.garden.getStartAngle();
+        this.lastCollisionPosition = this.garden.getStartPosition();
+
         this.isFreshInitialized = true;
         this.isError = false;
         this.stepCount = 0;
@@ -182,13 +186,14 @@ export default class Simulation {
             collisions.push(collisionDataOrFalse);
             
             // Resolve Collision
-            let bounceOffPoint = this.calculatePositionAfterCollision(collisionDataOrFalse);   
+            let bounceOffPoint = this.calculatePositionAfterCollision(collisionDataOrFalse, this.lastCollisionPosition);   
             
             this.lawn.cutGrass(pointFrom, collisionDataOrFalse.position);
             this.lawn.cutGrass(collisionDataOrFalse.position, bounceOffPoint);
 
             pointFrom = collisionDataOrFalse.position;
             pointTo = bounceOffPoint;
+            this.lastCollisionPosition = collisionDataOrFalse.position;
 
             collisionDataOrFalse = this.checkCollision(pointFrom, pointTo, collisionDataOrFalse.position);
             attempts++;
@@ -230,9 +235,10 @@ export default class Simulation {
      * @param collisionData 
      * @returns 
      */
-    private calculatePositionAfterCollision(collisionData: CollisionData): Position {
-        // TODO: Calculate distance from position to left starting point!
-        const angle = this.lawnMower.handleBoundaryCollision(0, collisionData.angleToBorder);
+    private calculatePositionAfterCollision(collisionData: CollisionData, lastCollision: Position): Position {
+        
+        const distanceToLastCollision = Position.calculateDistance(lastCollision, collisionData.position);
+        const angle = this.lawnMower.handleBoundaryCollision(distanceToLastCollision, collisionData.angleToBorder);
         if(angle < 0 || angle > Math.PI) {
             throw new Error("New LawnMower Angle is not in the range of 0 to 180 degrees: " + angle);
         }

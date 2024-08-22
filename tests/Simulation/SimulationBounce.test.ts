@@ -15,9 +15,19 @@ class BouncyLawnMower implements ILawnMower {
         45 * (Math.PI/180),
     ]
 
+    private assertedTravelledDistanceSinceLastCollision: number[] = [
+        7.07,
+        1.41,
+        2.92
+    ];
+
     private bounceIndex = 0;
 
-    handleBoundaryCollision(lengthBoundaryWireLeft: number, collissionAngle: number): number {
+    handleBoundaryCollision(travelledDistanceSinceLastCollision: number, collissionAngle: number): number {
+        if(this.assertedTravelledDistanceSinceLastCollision.length > this.bounceIndex){
+            expect(travelledDistanceSinceLastCollision).toBeCloseTo(this.assertedTravelledDistanceSinceLastCollision[this.bounceIndex], 0.01);
+        }
+
         const angle = this.bounces[this.bounceIndex % this.bounces.length];
         this.bounceIndex++;
         return angle;
